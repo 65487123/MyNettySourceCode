@@ -55,6 +55,7 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
      * @param args              arguments which will passed to each {@link #newChild(Executor, Object...)} call
      */
     protected MultithreadEventExecutorGroup(int nThreads, Executor executor, Object... args) {
+        //EventExecutorChooser从名字也可以看出是一个选择器，用来选择事件处理器的，默认是轮循算法
         this(nThreads, executor, DefaultEventExecutorChooserFactory.INSTANCE, args);
     }
 
