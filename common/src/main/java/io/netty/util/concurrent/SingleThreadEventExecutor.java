@@ -877,6 +877,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
         }
 
         boolean inEventLoop = inEventLoop();
+        //当已经启动线程了,把任务加进队列中
         addTask(task);
         if (!inEventLoop) {
             startThread();
@@ -896,7 +897,8 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
                 }
             }
         }
-
+        //如果添加的runnable没实现NonWakeupRunnable,会唤醒select()线程(如果正在select())的话
+        //NioEventLoop会重写这个方法,所以最终会调到那里
         if (!addTaskWakesUp && wakesUpForTask(task)) {
             wakeup(inEventLoop);
         }

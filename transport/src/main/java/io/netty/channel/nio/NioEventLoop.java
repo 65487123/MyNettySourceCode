@@ -443,9 +443,11 @@ public final class NioEventLoop extends SingleThreadEventLoop {
 
     @Override
     protected void run() {
+        //线程核心逻辑,执行select()以及别人丢进来的任务(task)
         for (;;) {
             try {
                 try {
+                    //根据是否有其他人丢进的任务判断是执行selectNow()还是select(),执行完返回结果并对比
                     switch (selectStrategy.calculateStrategy(selectNowSupplier, hasTasks())) {
                     case SelectStrategy.CONTINUE:
                         continue;
@@ -759,6 +761,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
 
     @Override
     protected void wakeup(boolean inEventLoop) {
+        //正在阻塞select()时候，别人加了任务,会调到这里
         if (!inEventLoop && wakenUp.compareAndSet(false, true)) {
             selector.wakeup();
         }
@@ -815,6 +818,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                 // Selector#wakeup. So we need to check task queue again before executing select operation.
                 // If we don't, the task might be pended until select operation was timed out.
                 // It might be pended until idle timeout if IdleStateHandler existed in pipeline.
+                //上面的这段注释已经说明了,select()前会再判断一次任务队列中是否有任务
                 if (hasTasks() && wakenUp.compareAndSet(false, true)) {
                     selector.selectNow();
                     selectCnt = 1;
