@@ -24,6 +24,8 @@ import java.util.NoSuchElementException;
 final class SelectedSelectionKeySet extends AbstractSet<SelectionKey> {
 
     SelectionKey[] keys;
+
+    //数组可读大小
     int size;
 
     SelectedSelectionKeySet() {
@@ -89,6 +91,7 @@ final class SelectedSelectionKeySet extends AbstractSet<SelectionKey> {
     }
 
     void reset(int start) {
+        //将key数组从start位到size位全置为null
         Arrays.fill(keys, start, size, null);
         size = 0;
     }
